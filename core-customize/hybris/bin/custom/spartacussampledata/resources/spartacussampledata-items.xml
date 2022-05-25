@@ -14,6 +14,58 @@
 			xsi:noNamespaceSchemaLocation="items.xsd">
 
 	<itemtypes>
+		
+		
+		
+		
+<!--
+add a new column in products table
+can find myproduct in "backoffice->type"
+cannot run "select * from myproduct"
+can only run "select * from products" and find products table has a new field called myExampleInitialStringField
+--> 
+ <itemtype code="MyProduct"
+                  extends="Product"
+                  jaloclass="de.hybris.platform.jalo.product.MyProduct"
+                  autocreate="true"
+                  generate="true">
+
+        <attributes>
+                <attribute qualifier="myExampleInitialStringField" type="java.lang.String">
+                    <description>My Example Initial String Value</description>
+                    <persistence type="property"/>
+                </attribute>
+
+            </attributes>
+        </itemtype>
+
+<!--
+create a new type
+can find mytype in "backoffice->type"
+can run "select * from mytype"
+-->
+<itemtype code="MyType"
+                  extends="GenericItem"
+                  jaloclass="de.hybris.platform.jalo.product.MyType"
+                  autocreate="true"
+                  generate="true">
+
+
+
+ <deployment table="MyType" typecode="90909"/>                  
+
+        <attributes>
+                <attribute qualifier="myExampleStringField" type="java.lang.String">
+                    <description>My Example String Value</description>
+                    <persistence type="property"/>
+                </attribute>
+
+            </attributes>
+        </itemtype>
+
+		
+		
+		
 <!--
 		<itemtype generate="true"
 		   code="MyProduct"
