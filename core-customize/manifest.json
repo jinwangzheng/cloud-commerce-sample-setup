@@ -3,10 +3,7 @@
     "enableImageProcessingService": true,
     "extensions": [
         "cloudmediaconversion",  
-        "mediaconversionbackoffice",
-        "patches",
-        "patchesdemo",
-        "patchesbackoffice"
+        "mediaconversionbackoffice"
         
     ],
     "useConfig": {
