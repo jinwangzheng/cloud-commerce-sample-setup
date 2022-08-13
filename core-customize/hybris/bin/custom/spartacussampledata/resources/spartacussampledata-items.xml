@@ -24,6 +24,7 @@ can find myproduct in "backoffice->type"
 cannot run "select * from myproduct"
 can only run "select * from products" and find products table has a new field called myExampleInitialStringField
 --> 
+		<!--
  <itemtype code="MyProduct"
                   extends="Product"
                   jaloclass="de.hybris.platform.jalo.product.MyProduct"
@@ -38,12 +39,13 @@ can only run "select * from products" and find products table has a new field ca
 
             </attributes>
         </itemtype>
-
+-->
 <!--
 create a new type
 can find mytype in "backoffice->type"
 can run "select * from mytype"
 -->
+		<!--
 <itemtype code="MyType"
                   extends="GenericItem"
                   jaloclass="de.hybris.platform.jalo.product.MyType"
@@ -62,7 +64,7 @@ can run "select * from mytype"
 
             </attributes>
         </itemtype>
-
+-->
 		
 		
 		
