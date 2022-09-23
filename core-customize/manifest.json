@@ -13,10 +13,7 @@
             "location": "brook-solr"
          },
         "properties": [
-            {
-               "key":"configFile",
-               "value":"/opt/hybris/update-config.json"
-            }, 
+
             {
                 "location": "/hybris/config/environments/local-dev.properties",
                 "persona": "development"
@@ -55,6 +52,10 @@
         }
     },
     "properties": [
+        {
+               "key":"configFile",
+               "value":"/opt/hybris/update-config.json"
+        }, 
         {
             "key": "lang.packs",
             "value": "de,en"
