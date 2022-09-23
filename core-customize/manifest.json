@@ -52,7 +52,10 @@
         }
     },
     "properties": [
-
+        {
+               "key":"configFile",
+               "value":"/opt/hybris/update-config.json"
+        }, 
         {
             "key": "lang.packs",
             "value": "de,en"
