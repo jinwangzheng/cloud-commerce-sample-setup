@@ -184,9 +184,9 @@
     <extension name='tiger'/> -->
 
 <!-- If you want to test Cloud Hot Folders locally download the extensions from https://launchpad.support.sap.com/#/notes/2817992 and uncomment the following -->
-    <!--<extension name='azurecloudhotfolder' />
+   <extension name='azurecloudhotfolder' />
     <extension name='cloudcommons' />
-    <extension name='cloudhotfolder' />-->
+    <extension name='cloudhotfolder' />
 
   </extensions>
 </hybrisconfig>
