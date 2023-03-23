@@ -180,6 +180,10 @@
                 {
                     "key": "cluster.node.groups",
                     "value": "integration,yHotfolderCandidate"
+                },
+                   {
+                    "key": "cloud.hotfolder.default.mapping.file.name.pattern",
+                    "value": "^(price|customer|product|url_media)-\\d+.*"
                 }
             ],
             "webapps": [
