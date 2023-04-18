@@ -43,7 +43,7 @@
         "extensions": {
             "location": "hybris/config/localextensions.xml",
             "exclude": [
-
+                 "odata2webservicesfeaturetests"
             ]
         }
     },
