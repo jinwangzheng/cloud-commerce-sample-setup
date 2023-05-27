@@ -3,9 +3,7 @@
     "enableImageProcessingService": true,
     "extensions": [
         "cloudmediaconversion",  
-        "mediaconversionbackoffice",
-        "alluicommons"
-        
+        "mediaconversionbackoffice"
     ],
     "useConfig": {
          "solr": {
