@@ -1,6 +1,10 @@
 <hybrisconfig xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../bin/platform/resources/schemas/extensions.xsd'>
   <extensions>
     <path dir='${HYBRIS_BIN_DIR}' autoload='false' />
+    
+    
+
+    
     <extension name='adaptivesearch' />
     <extension name='adaptivesearchbackoffice' />
     <extension name='adaptivesearchfacades' />
@@ -19,7 +23,12 @@
     <extension name='assistedservicewebservices' />
     <extension name='assistedserviceyprofileaddon' />
     <extension name='assistedserviceyprofilefacades' />
+    
+    <extension name= 'powertoolsstore' />
+    <extension name= 'apparelstore' />
     <extension name='electronicsstore' />
+    
+    
     <extension name='multicountrysampledataaddon' />
     <extension name='pcmbackofficesamplesaddon' />
     <extension name='classificationgroupsservices' />
