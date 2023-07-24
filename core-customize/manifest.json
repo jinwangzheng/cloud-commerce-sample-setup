@@ -47,12 +47,7 @@
             }
         ],
         "extensions": {
-            "location": "hybris/config/localextensions.xml",
-            "exclude": [
-                "azurecloudhotfolder",
-                "cloudcommons",
-                "cloudhotfolder"
-            ]
+            "location": "hybris/config/localextensions.xml"
         }
     },
     "properties": [
