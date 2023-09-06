@@ -4,7 +4,7 @@
       "name": "spartacusstore",
       "path": "spartacusstore",
       "ssr": {
-        "enabled": false,
+        "enabled": true,
         "path": "dist/spartacusstore/server/main.js"
       },
       "csr": {
@@ -15,7 +15,7 @@
       "name": "b2bspastore",
       "path": "b2bspastore",
       "ssr": {
-        "enabled": false,
+        "enabled": true,
         "path": "dist/b2bspastore/server/main.js"
       },
       "csr": {
