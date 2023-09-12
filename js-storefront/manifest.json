@@ -4,7 +4,7 @@
             "name": "mystore",
             "path": "mystore",
             "csr": {
-                "webroot": "dist/mystore/browser/"
+                "webroot": "dist/mystore/"
             }
         }
     ],
