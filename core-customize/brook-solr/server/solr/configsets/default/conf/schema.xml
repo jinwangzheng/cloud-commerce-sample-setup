@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- 
 Copied from /var/solr/configsets/default/conf/schema.xml
+It's override /var/solr/configsets/default/conf/schema.xml after deployment.
 By Brook on 2024.01.08
 -->
 
