@@ -9,6 +9,7 @@ Add below to "useConfig" in manifest.json:
 Step2:
 Create this file by Copying from /var/solr/configsets/default/conf/schema.xml and adding this comment.
 It'll override /var/solr/configsets/default/conf/schema.xml of base solr image after deployment.
+
 By Brook on 2024.01.08
 -->
 
