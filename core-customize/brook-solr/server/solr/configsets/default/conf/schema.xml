@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- 
-Copied from /var/solr/configsets/default/conf/schema.xml
-It's override /var/solr/configsets/default/conf/schema.xml after deployment.
+Step1:
+Add below to "useConfig" in manifest.json: 
+      "solr": {
+            "location": "brook"
+      }
+
+Step2:
+Create this file by Copying from /var/solr/configsets/default/conf/schema.xml and adding this comment.
+It'll override /var/solr/configsets/default/conf/schema.xml of base solr image after deployment.
 By Brook on 2024.01.08
 -->
 
