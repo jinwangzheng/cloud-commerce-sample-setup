@@ -360,6 +360,10 @@
                 {
                     "name": "xyformsweb",
                     "contextPath": "/xyformsweb"
+                },
+                {
+                    "name": "yacceleratorstorefront",
+                    "contextPath": ""
                 }
             ]
         },
