@@ -176,7 +176,8 @@
         {
         "key": "aaa",
         "value": "bbb" 
-        },
+        }
+    ],
     "aspects": [
         {
             "name": "backoffice",
