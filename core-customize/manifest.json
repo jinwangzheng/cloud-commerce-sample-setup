@@ -172,6 +172,11 @@
             "value": "false"
         }
     ],
+    "properties": [
+        {
+        "key": "aaa",
+        "value": "bbb" 
+        },
     "aspects": [
         {
             "name": "backoffice",
