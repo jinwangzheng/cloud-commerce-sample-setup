@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<solr>
+	<str name="coreRootDirectory">${solr.data.home:./}</str>
+
+	<solrcloud>
+		<str name="host">${host:}</str>
+		<int name="hostPort">${jetty.port:8983}</int>
+		<str name="hostContext">${hostContext:solr}</str>
+
+		<bool name="genericCoreNodeNames">${genericCoreNodeNames:true}</bool>
+
+		<int name="zkClientTimeout">${zkClientTimeout:30000}</int>
+		<int name="distribUpdateSoTimeout">${distribUpdateSoTimeout:600000}</int>
+		<int name="distribUpdateConnTimeout">${distribUpdateConnTimeout:60000}</int>
+    <!--
+    update to solr 9.5
+		<str name="zkCredentialsProvider">${zkCredentialsProvider:org.apache.solr.common.cloud.DefaultZkCredentialsProvider}</str>
+		<str name="zkACLProvider">${zkACLProvider:org.apache.solr.common.cloud.DefaultZkACLProvider}</str>
+    -->
+
+<str name="zkACLProvider">${zkACLProvider:org.apache.solr.common.cloud.DefaultZkACLProvider}</str>
+<str name="zkCredentialsProvider">${zkCredentialsProvider:org.apache.solr.common.cloud.DefaultZkCredentialsProvider}</str>
+<str name="zkCredentialsInjector">${zkCredentialsInjector:org.apache.solr.common.cloud.DefaultZkCredentialsInjector}</str> 
+    
+	</solrcloud>
+
+	<shardHandlerFactory name="shardHandlerFactory" class="HttpShardHandlerFactory">
+		<int name="socketTimeout">${socketTimeout:600000}</int>
+		<int name="connTimeout">${connTimeout:60000}</int>
+	</shardHandlerFactory>
+<backup>
+<repository name="azure-blob" class="com.hybris.cloud.solr.azurebackup.AzureBlobStorageBackupRepository" default="false" />
+</backup>
+</solr>
