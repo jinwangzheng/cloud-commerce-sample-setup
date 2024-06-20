@@ -17,7 +17,10 @@ By Brook on 2024.01.08
  For more information, on how to customize this file, please see https://lucene.apache.org/solr/guide/8_8/documents-fields-and-schema-design.html
 -->
 
+<!--
 <schema name="hybris" version="8.11">
+-->
+	<schema name="hybris" version="9.5">
 	<types>
 		<!-- Basic Types -->
 
