@@ -12,6 +12,7 @@ import {
   layoutConfig,
   mediaConfig,
 } from '@spartacus/storefront';
+import { provideConfigFactory } from "@spartacus/core";
 
 @NgModule({
   declarations: [],
