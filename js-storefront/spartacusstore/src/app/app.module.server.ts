@@ -5,6 +5,9 @@ import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
 import { provideServer } from '@spartacus/setup/ssr';
 
+import {myForwardedProtoInterceptor} from "./myForwardedProtoInterceptor";
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
 @NgModule({
   imports: [
     AppModule,
@@ -15,6 +18,7 @@ import { provideServer } from '@spartacus/setup/ssr';
     ...provideServer({
        serverRequestOrigin: process.env['SERVER_REQUEST_ORIGIN'],
      }),
+    { provide: HTTP_INTERCEPTORS, multi:true, useExisting: myForwardedProtoInterceptor }
   ],
 })
 export class AppServerModule {}
