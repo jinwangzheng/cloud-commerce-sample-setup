@@ -47,6 +47,7 @@ import {
         level: '2211.24',
       },
     }),
+    provideConfigFactory(myOccConfigFactory)
   ],
 })
 export class SpartacusConfigurationModule {}
