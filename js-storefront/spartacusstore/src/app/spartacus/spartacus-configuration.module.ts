@@ -13,6 +13,7 @@ import {
   mediaConfig,
 } from '@spartacus/storefront';
 import { provideConfigFactory } from "@spartacus/core";
+import { myOccConfigFactory } from '../myOccConfigFactory';
 
 @NgModule({
   declarations: [],
