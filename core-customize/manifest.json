@@ -2,6 +2,7 @@
     "commerceSuiteVersion": "2211.24",
     "enableImageProcessingService": true,
     "extensions": [
+        "azurecloudhotfolder",
         "cloudmediaconversion",
         "mediaconversionbackoffice"
     ],
