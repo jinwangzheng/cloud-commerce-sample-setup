@@ -1,5 +1,5 @@
 {
-    "commerceSuiteVersion": "2211.24",
+    "commerceSuiteVersion": "2211.27",
     "enableImageProcessingService": true,
     "extensions": [
         "azurecloudhotfolder",
