@@ -9,9 +9,11 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop.xsd">
-
+<!--
 <import resource="hotfolder/hot-folder-dsp-*.xml"/>
-
+-->
+<import resource="hotfolder/hot-folder-dsp-ev-tokenvalidation.xml"/>
+	
 	<!--
 	The hybris platform provides one single Spring application context for beans located at the jalo layer.
 	Each extension can add beans to this context by specifying them at this configuration file.
