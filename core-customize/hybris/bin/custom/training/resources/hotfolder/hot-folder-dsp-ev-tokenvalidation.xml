@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration
+       http://www.springframework.org/schema/integration/spring-integration.xsd
+       http://www.springframework.org/schema/integration/file
+       http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+       http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <!-- token validation cloud hot folder configuration starts -->
+    <!--setting up custom folder in azure cloud blob to read token validation files-->
+    <bean id="evTokenValidationRemotePath" class="java.lang.String">
+        <constructor-arg
+                value="#{azureHotfolderRemotePath}/ev/tokenvalidation"/>
+    </bean>
+    <bean id="evTokenValidationRemoteProcessingPath" class="java.lang.String">
+        <constructor-arg
+                value="#{evTokenValidationRemotePath}/processing"/>
+    </bean>
+    <bean id="evTokenValidationRemotePathRegEx" class="java.lang.String">
+        <constructor-arg
+                value=".*(\\|\/)hotfolder(\\|\/)ev(\\|\/)tokenvalidation(\\|\/)"/>
+    </bean>
+
+    <bean id="evTokenValidationBlobInboundSynchronizer"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.inbound.AzureBlobInboundSynchronizer">
+        <constructor-arg name="sessionFactory" ref="azureBlobSessionFactory"/>
+        <property name="remoteDirectory" ref="evTokenValidationRemotePath"/>
+        <property name="moveToRemoteDirectory" ref="evTokenValidationRemoteProcessingPath"/>
+        <property name="deleteRemoteFiles" value="${azure.hotfolder.storage.delete.remote.files}"/>
+        <property name="preserveTimestamp" value="true"/>
+        <property name="filter" ref="azureHotfolderFileFilter"/>
+        <property name="comparator" ref="azureHotFolderFileComparator"/>
+    </bean>
+
+    <bean id="evTokenValidationBlobSynchronizingMessageSource"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.inbound.AzureBlobSynchronizingMessageSource">
+        <constructor-arg name="synchronizer" ref="evTokenValidationBlobInboundSynchronizer"/>
+        <property name="autoCreateLocalDirectory" value="true"/>
+        <property name="localDirectory"
+                  value="#{azureHotfolderLocalDirectoryBase}/#{evTokenValidationRemotePath}"/>
+        <property name="maxFetchSize" value="${azure.hotfolder.storage.polling.fetch.batch-size}"/>
+    </bean>
+
+    <int:inbound-channel-adapter id="evTokenValidationInboundChannelAdapter" auto-startup="false"
+                                 role="${cloud.hotfolder.storage.services.role}" phase="50"
+                                 ref="evTokenValidationBlobSynchronizingMessageSource"
+                                 channel="dspHotfolderInboundFileHeaderEnricherChannel">
+        <int:poller fixed-rate="${azure.hotfolder.storage.polling.fixed.rate}"
+                    task-executor="azureChannelAdapterTaskExecutor"
+                    max-messages-per-poll="${azure.hotfolder.storage.polling.fetch.batch-size}">
+            <int:transactional synchronization-factory="evTokenValidationSynchronizationFactory"
+                               transaction-manager="azurePsuedoTxManager"/>
+        </int:poller>
+    </int:inbound-channel-adapter>
+
+    <int:transaction-synchronization-factory id="evTokenValidationSynchronizationFactory">
+        <int:after-commit channel="evTokenValidationArchiveOutboundChannelAdapter"/>
+        <int:after-rollback channel="evTokenValidationErrorOutboundChannelAdapter"/>
+    </int:transaction-synchronization-factory>
+
+    <int:outbound-channel-adapter id="evTokenValidationArchiveOutboundChannelAdapter"
+                                  ref="evTokenValidationArchiveMessageHandler"/>
+
+    <bean id="evTokenValidationArchiveMessageHandler" parent="abstractAzureMoveMessageHandler">
+        <property name="remoteDirectory" value="#{evTokenValidationRemotePath}/archive"/>
+    </bean>
+
+    <int:outbound-channel-adapter id="evTokenValidationErrorOutboundChannelAdapter"
+                                  ref="evTokenValidationErrorMessageHandler"/>
+
+    <bean id="evTokenValidationErrorMessageHandler" parent="abstractAzureMoveMessageHandler">
+        <property name="remoteDirectory" value="#{evTokenValidationRemotePath}/error"/>
+    </bean>
+    <!-- token validation cloud hot folder configuration ends -->
+
+
+    <!-- File import process starts -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="hotfolderInboundFileChannelMappings"/>
+        <property name="targetMethod" value="put"/>
+        <property name="arguments">
+            <list>
+                <bean class="java.util.regex.Pattern" factory-method="compile">
+                    <constructor-arg value="#{evTokenValidationRemotePathRegEx}(tokenvalidation).*-.*\.csv"/>
+                </bean>
+                <ref bean="evTokenValidationFiles"/>
+            </list>
+        </property>
+    </bean>
+    <int:channel id="evTokenValidationFiles"/>
+
+    <file:outbound-gateway id="evTokenValidationOutboundChannel" request-channel="evTokenValidationFiles" reply-channel="dspFilesProcessing"
+                           directory="#{azureHotfolderLocalDirectoryBase}/#{evTokenValidationRemotePath}/processing"
+                           delete-source-files="true"/>
+
+    <!-- Transformer converters mappings -->
+    <bean id="evTokenValidationConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="tokenvalidation"
+          p:converter-ref="evTokenValidationConverter"/>
+    <!-- impex converters -->
+    <bean id="evTokenValidationConverter"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+        <property name="header">
+            <value>
+                INSERT_UPDATE TokenValidationProfile; ssoId[unique = true]; token; goodPayment
+            </value>
+        </property>
+        <property name="impexRow">
+            <value>
+                ;{+0};{1};{2}
+            </value>
+        </property>
+    </bean>
+    <!-- File import process ends -->
+
+</beans>

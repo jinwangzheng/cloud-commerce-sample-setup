@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration
+       http://www.springframework.org/schema/integration/spring-integration.xsd
+       http://www.springframework.org/schema/integration/file
+       http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+       http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <!-- token migration cloud hot folder configuration starts -->
+    <!--setting up custom folder in azure cloud blob to read token migration files-->
+    <bean id="evTokenMigrationRemotePath" class="java.lang.String">
+        <constructor-arg
+                value="#{azureHotfolderRemotePath}/ev/tokenmigration"/>
+    </bean>
+    <bean id="evTokenMigrationRemoteProcessingPath" class="java.lang.String">
+        <constructor-arg
+                value="#{evTokenMigrationRemotePath}/processing"/>
+    </bean>
+    <bean id="evTokenMigrationRemotePathRegEx" class="java.lang.String">
+        <constructor-arg
+                value=".*(\\|\/)hotfolder(\\|\/)ev(\\|\/)tokenmigration(\\|\/)"/>
+    </bean>
+
+    <bean id="evTokenMigrationBlobInboundSynchronizer"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.inbound.AzureBlobInboundSynchronizer">
+        <constructor-arg name="sessionFactory" ref="azureBlobSessionFactory"/>
+        <property name="remoteDirectory" ref="evTokenMigrationRemotePath"/>
+        <property name="moveToRemoteDirectory" ref="evTokenMigrationRemoteProcessingPath"/>
+        <property name="deleteRemoteFiles" value="${azure.hotfolder.storage.delete.remote.files}"/>
+        <property name="preserveTimestamp" value="true"/>
+        <property name="filter" ref="azureHotfolderFileFilter"/>
+        <property name="comparator" ref="azureHotFolderFileComparator"/>
+    </bean>
+
+    <bean id="evTokenMigrationBlobSynchronizingMessageSource"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.inbound.AzureBlobSynchronizingMessageSource">
+        <constructor-arg name="synchronizer" ref="evTokenMigrationBlobInboundSynchronizer"/>
+        <property name="autoCreateLocalDirectory" value="true"/>
+        <property name="localDirectory"
+                  value="#{azureHotfolderLocalDirectoryBase}/#{evTokenMigrationRemotePath}"/>
+        <property name="maxFetchSize" value="${azure.hotfolder.storage.polling.fetch.batch-size}"/>
+    </bean>
+
+    <int:inbound-channel-adapter id="evTokenMigrationInboundChannelAdapter" auto-startup="false"
+                                 role="${cloud.hotfolder.storage.services.role}" phase="50" ref="evTokenMigrationBlobSynchronizingMessageSource"
+                                 channel="dspHotfolderInboundFileHeaderEnricherChannel">
+        <int:poller fixed-rate="${azure.hotfolder.storage.polling.fixed.rate}"
+                    task-executor="azureChannelAdapterTaskExecutor"
+                    max-messages-per-poll="${azure.hotfolder.storage.polling.fetch.batch-size}">
+            <int:transactional synchronization-factory="evTokenMigrationSynchronizationFactory"
+                               transaction-manager="azurePsuedoTxManager"/>
+        </int:poller>
+    </int:inbound-channel-adapter>
+
+    <int:transaction-synchronization-factory id="evTokenMigrationSynchronizationFactory">
+        <int:after-commit channel="evTokenMigrationArchiveOutboundChannelAdapter"/>
+        <int:after-rollback channel="evTokenMigrationErrorOutboundChannelAdapter"/>
+    </int:transaction-synchronization-factory>
+
+    <int:outbound-channel-adapter id="evTokenMigrationArchiveOutboundChannelAdapter" ref="evTokenMigrationArchiveMessageHandler"/>
+
+    <bean id="evTokenMigrationArchiveMessageHandler" parent="abstractAzureMoveMessageHandler">
+        <property name="remoteDirectory" value="#{evTokenMigrationRemotePath}/archive"/>
+    </bean>
+
+    <int:outbound-channel-adapter id="evTokenMigrationErrorOutboundChannelAdapter" ref="evTokenMigrationErrorMessageHandler"/>
+
+    <bean id="evTokenMigrationErrorMessageHandler" parent="abstractAzureMoveMessageHandler">
+        <property name="remoteDirectory" value="#{evTokenMigrationRemotePath}/error"/>
+    </bean>
+    <!-- token migration cloud hot folder configuration ends -->
+
+
+
+    <!-- File import process starts -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="hotfolderInboundFileChannelMappings"/>
+        <property name="targetMethod" value="put"/>
+        <property name="arguments">
+            <list>
+                <bean class="java.util.regex.Pattern" factory-method="compile">
+                    <constructor-arg value="#{evTokenMigrationRemotePathRegEx}(tokenmigration).*-.*\.csv" />
+                </bean>
+                <ref bean="evTokenMigrationFiles"/>
+            </list>
+        </property>
+    </bean>
+    <int:channel id="evTokenMigrationFiles"/>
+
+    <file:outbound-gateway id="evTokenMigrationOutboundChannel" request-channel="evTokenMigrationFiles" reply-channel="dspFilesProcessing"
+                           directory="#{azureHotfolderLocalDirectoryBase}/#{evTokenMigrationRemotePath}/processing" delete-source-files="true"/>
+
+    <!-- Transformer converters mappings -->
+    <bean id="evTokenMigrationConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="tokenmigration"
+          p:converter-ref="evTokenMigrationConverter"/>
+    <!-- impex converters -->
+    <bean id="evTokenMigrationConverter"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+        <property name="header">
+            <value>
+                INSERT_UPDATE TokenMigrationProfile; ssoId[unique = true]; shopperReference
+            </value>
+        </property>
+        <property name="impexRow">
+            <value>
+                ;{+0};{1}
+            </value>
+        </property>
+    </bean>
+    <!-- File import process ends -->
+
+</beans>

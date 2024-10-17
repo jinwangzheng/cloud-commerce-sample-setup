@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/integration
+        http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/file
+        http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--Cloud hotfolder Header Enricher Starts-->
+    <bean id="filePathHeaderKey" class="java.lang.String">
+        <constructor-arg
+                value="#{T(de.hybris.platform.cloud.hotfolder.spring.integration.file.CloudFileHeaders).RELATIVE_PATH}"/>
+    </bean>
+
+    <int:channel id="dspHotfolderInboundFileHeaderEnricherChannel"/>
+
+    <int:header-enricher id="dspHotfolderInboundFileNameHeaderEnricherChannel"
+                         input-channel="dspHotfolderInboundFileHeaderEnricherChannel"
+                         output-channel="dspHotfolderInboundFileChannel">
+        <int:header name="#{fileNameHeaderKey}" expression="payload.getName()"/>
+        <int:header name="#{fileLastModifiedHeaderKey}" expression="payload.lastModified()"/>
+        <int:header name="#{filePathHeaderKey}" expression="payload.getPath()"/>
+    </int:header-enricher>
+
+    <int:router id="dspHotfolderInboundMessageRouter"
+                input-channel="dspHotfolderInboundFileChannel"
+                ref="dspHotfolderFileNameHeaderValueRouter"/>
+
+    <bean id="dspHotfolderFileNameHeaderValueRouter"
+          class="org.springframework.integration.router.HeaderValueRouter">
+        <constructor-arg ref="filePathHeaderKey"/>
+        <property name="channelResolver" ref="hotfolderInboundFilePatternMatchingChannelResolver"/>
+        <property name="resolutionRequired" value="${cloud.hotfolder.storage.header.router.resolution.required}"/>
+        <property name="defaultOutputChannel" ref="unmappedHotFolderChannel"/>
+    </bean>
+    <!--Cloud hot folder Header Enricher ends-->
+
+
+    <!--Common file processing steps starts-->
+    <int:service-activator input-channel="dspFilesProcessing" output-channel="dspFilesHeaderInit"
+                           ref="dspHeaderSetupTask" method="execute"/>
+    <bean id="dspHeaderSetupTask"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.task.HeaderSetupTask">
+        <property name="net" value="${cloud.hotfolder.default.zip.header.net}"/>
+    </bean>
+
+    <int:service-activator input-channel="dspFilesHeaderInit" output-channel="dspFilesHeader"
+                           ref="dspHeaderInitTask"
+                           method="execute"/>
+    <bean id="dspHeaderInitTask" class="de.hybris.platform.acceleratorservices.dataimport.batch.task.HeaderInitTask">
+        <property name="sequenceIdParser" ref="batchSequenceIdParser"/>
+        <property name="languageParser" ref="batchLanguageParser"/>
+        <property name="fallbackLanguage" value="en" />
+    </bean>
+
+    <int:service-activator input-channel="dspFilesHeader" output-channel="dspFilesTran"
+                           ref="dspTransformerTask"
+                           method="execute"/>
+    <bean id="dspTransformerTask"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.task.ImpexTransformerTask"
+          init-method="initConvertersMap">
+        <property name="fieldSeparator" value=","/>
+        <property name="encoding" value="UTF-8"/>
+        <property name="linesToSkip" value="0"/>
+        <property name="cleanupHelper" ref="cleanupHelper"/>
+    </bean>
+    <!-- run impex import -->
+    <int:service-activator input-channel="dspFilesTran" output-channel="dspFilesImp"
+                           ref="dspRunnerTask"
+                           method="execute"/>
+    <bean id="dspRunnerTask"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.task.AbstractImpexRunnerTask">
+        <property name="sessionService" ref="sessionService"/>
+        <property name="importService" ref="importService"/>
+        <lookup-method name="getImportConfig" bean="importConfig"/>
+        <lookup-method name="getHeaderTaskConfig" bean="headerTaskConfig"/>
+    </bean>
+    <bean id="importConfig" class="de.hybris.platform.servicelayer.impex.ImportConfig" scope="prototype">
+        <property name="removeOnSuccess" value="true"/>
+        <property name="failOnError" value="false"/>
+        <property name="synchronous" value="true"/>
+        <property name="legacyMode" value="false"/>
+        <property name="maxThreads"
+                  value="#{configurationService.configuration.getProperty('acceleratorservices.batch.impex.max-threads')}"/>
+        <property name="locale" value="en"/>
+    </bean>
+    <bean id="headerTaskConfig" class="de.hybris.platform.acceleratorservices.dataimport.batch.HeaderTaskConfig"
+          scope="prototype">
+        <property name="propagateError"
+                  value="#{configurationService.configuration.getProperty('acceleratorservices.batch.impex.propagateError')}"/>
+    </bean>
+    <!-- Cleanup -->
+    <int:service-activator input-channel="dspFilesImp" ref="dspCleanupTask" method="execute"/>
+    <bean id="dspCleanupTask"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.task.CleanupTask">
+        <property name="cleanupHelper" ref="cleanupHelper"/>
+    </bean>
+    <!--Common file processing steps ends-->
+
+
+
+    <!-- Build failed due to missing below beans in OOTB after adding cloud hot folder extensions. hence defining below dummy beans-->
+    <!-- OOTB Converters Starts -->
+    <bean id="batchMediaConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+        <property name="header">
+            <value>#{defaultImpexProductHeader}
+                # Import media from filesystem
+                $importFolder=file:$BASE_SOURCE_DIR$/images
+                INSERT_UPDATE Media;mediaFormat(qualifier);code[unique=true];mime[default='image/jpeg'];$catalogVersion;folder(qualifier)[default=images];realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator]
+            </value>
+        </property>
+        <property name="impexRow">
+            <value>;1200Wx1200H;/1200Wx1200H/{+1};;;;{+1};$importFolder/1200Wx1200H/{+1}</value>
+        </property>
+    </bean>
+    <bean id="batchMediaContainerConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+        <property name="header">
+            <value>#{defaultImpexProductHeader}
+                # Import media container
+                INSERT_UPDATE MediaContainer;qualifier[unique=true];medias(code, $catalogVersion);$catalogVersion
+            </value>
+        </property>
+        <property name="impexRow">
+            <value>;{1};/1200Wx1200H/{1},/515Wx515H/{1},/300Wx300H/{1},/96Wx96H/{1},/65Wx65H/{1},/30Wx30H/{1}</value>
+        </property>
+    </bean>
+    <bean id="batchMediaProductConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+        <property name="header">
+            <value>#{defaultImpexProductHeader}
+                $thumbnail=thumbnail(code, $catalogVersion)
+                $thumbnails=thumbnails(code, $catalogVersion)
+                $picture=picture(code, $catalogVersion)
+                $detail=detail(code, $catalogVersion)
+                $normal=normal(code, $catalogVersion)
+                $others=others(code, $catalogVersion)
+                $galleryImages=galleryImages(qualifier, $catalogVersion)
+                # Import product media
+                UPDATE Product;code[unique=true];$picture;$thumbnail;$detail;$others;$normal;$thumbnails;$galleryImages;sequenceId[translator=de.hybris.platform.acceleratorservices.dataimport.batch.converter.GreaterSequenceIdTranslator];$catalogVersion
+            </value>
+        </property>
+        <property name="impexRow">
+            <value>;{+0};/300Wx300H/{1};/96Wx96H/{1};/1200Wx1200H/{1};/515Wx515H/{1},/96Wx96H/{1},/30Wx30H/{1};/300Wx300H/{1};/96Wx96H/{1};{1};{S}</value>
+        </property>
+    </bean>
+    <!-- OOTB Converters ends -->
+
+</beans>
