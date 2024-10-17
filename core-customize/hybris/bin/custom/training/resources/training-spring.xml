@@ -13,6 +13,7 @@
 <import resource="hotfolder/hot-folder-dsp-*.xml"/>
 -->
 <import resource="hotfolder/hot-folder-dsp-ev-tokenvalidation.xml"/>
+<import resource="hotfolder/hot-folder-dsp-common.xml"/>
 	
 	<!--
 	The hybris platform provides one single Spring application context for beans located at the jalo layer.
