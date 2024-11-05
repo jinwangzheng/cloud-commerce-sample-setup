@@ -5,7 +5,8 @@
         "azurecloudhotfolder",
         "cloudmediaconversion",
         "mediaconversionbackoffice",
-        "training"
+        "training",
+        cloudscimwebservices
     ],
     "storefrontAddons": [
         {
@@ -295,6 +296,10 @@
                 {
                     "name": "merchandisingcmswebservices",
                     "contextPath": "/merchandisingcmswebservices"
+                },
+                 {
+                    "name":"cloudscimwebservices",
+                    "contextPath":"/scim"
                 }
             ]
         },
