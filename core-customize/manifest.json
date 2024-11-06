@@ -6,7 +6,8 @@
         "cloudmediaconversion",
         "mediaconversionbackoffice",
         "training",
-        "cloudscimwebservices"
+        "cloudscimwebservices",
+        "swaggerintegration"
     ],
     "storefrontAddons": [
         {
