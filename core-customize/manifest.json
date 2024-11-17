@@ -481,6 +481,10 @@
             ],
             "webapps": [
                 {
+                    "name": "test",
+                    "contextPath": "/test"
+                },
+                {
                     "name": "hac",
                     "contextPath": "/hac"
                 },
