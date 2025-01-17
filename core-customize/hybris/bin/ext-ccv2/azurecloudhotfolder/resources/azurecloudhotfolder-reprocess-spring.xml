@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2023 SAP SE or an SAP affiliate company.  All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/integration/file
+            http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+
+
+    <alias name="simpleHotfolderUnprocessedFilesMetadataStore" alias="hotfolderUnprocessedFilesMetadataStore"/>
+    <bean id="simpleHotfolderUnprocessedFilesMetadataStore"
+          class="de.hybris.platform.cloud.commons.spring.integration.metadata.ExpiringSimpleMetadataStore">
+        <constructor-arg name="maxSize" value="${cloud.hotfolder.unprocessed.file.metadata.max-size}"/>
+        <constructor-arg name="ttl" value="${cloud.hotfolder.unprocessed.file.metadata.ttl}"/>
+    </bean>
+
+    <alias name="defaultAzureBlobAcceptUnprocessedFilesListFilter"
+           alias="azureBlobAcceptUnprocessedFilesListFilter"/>
+    <bean id="defaultAzureBlobAcceptUnprocessedFilesListFilter"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.file.filters.AzureBlobAcceptUnprocessedFilesListFilter">
+        <constructor-arg name="store" ref="hotfolderUnprocessedFilesMetadataStore"/>
+        <constructor-arg name="prefix" value="${azure.hotfolder.storage.metadatastore.prefix}"/>
+        <constructor-arg name="inprocessingFilesMetadataStore" ref="hotfolderMetadataStore"/>
+        <constructor-arg name="azureHotfolderProcessingRemotePath" ref="azureHotfolderProcessingRemotePath"/>
+        <constructor-arg name="azureHotfolderRemotePath" ref="azureHotfolderRemotePath"/>
+        <constructor-arg name="maxUnprocessedFileCheckCount"
+                         value="${cloud.hotfolder.unprocessed.file.metadata.check.max-count}"/>
+    </bean>
+
+    <alias name="defaultAzureUnprocessedFileFilterList" alias="azureUnprocessedFileFilterList"/>
+    <util:list id="defaultAzureUnprocessedFileFilterList">
+        <ref bean="azureBlobRegexPatternFileListFilter"/>
+        <ref bean="azureBlobAcceptUnprocessedFilesListFilter"/>
+    </util:list>
+
+    <alias name="azureChainUnprocessedFileListFilter" alias="azureHotfolderUnprocessedFileFilter"/>
+    <bean id="azureChainUnprocessedFileListFilter"
+          class="de.hybris.platform.cloud.commons.spring.integration.file.filters.ChainFileListFilter">
+        <constructor-arg name="fileFilters" ref="azureUnprocessedFileFilterList"/>
+    </bean>
+
+    <!-- Azure Inbound Unprocessed File Executor and Channel Adapter -->
+
+    <alias name="defaultAzureBlobUnprocessedFileExecutor" alias="azureBlobUnprocessedFileExecutor"/>
+    <bean id="defaultAzureBlobUnprocessedFileExecutor"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.inbound.AzureBlobUnprocessedFileExecutor">
+        <constructor-arg name="sessionFactory" ref="azureBlobSessionFactory"/>
+        <property name="processingRemoteDirectory" value="#{azureHotfolderProcessingRemotePath}"/>
+        <property name="filter" ref="azureHotfolderUnprocessedFileFilter"/>
+        <property name="comparator" ref="azureHotFolderFileComparator"/>
+    </bean>
+
+    <alias name="defaultAzureBlobUnprocessedFileMessageSource" alias="azureBlobUnprocessedFileMessageSource"/>
+    <bean id="defaultAzureBlobUnprocessedFileMessageSource"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.inbound.AzureBlobUnprocessedFileMessageSource">
+        <property name="unprocessedFileExecutor" ref="azureBlobUnprocessedFileExecutor"/>
+        <property name="maxFetchSize" value="${azure.hotfolder.storage.unprocessed.file.polling.fetch.batch-size}"/>
+    </bean>
+
+    <int:inbound-channel-adapter id="azureInboundUnprocessedFileChannelAdapter"
+                                 auto-startup="false"
+                                 role="${cloud.hotfolder.storage.services.role}"
+                                 phase="50"
+                                 ref="azureBlobUnprocessedFileMessageSource"
+                                 channel="cloudHotfolderUnprocessedFileChannel">
+        <int:poller fixed-rate="${azure.hotfolder.storage.unprocessed.file.polling.fixed.rate}"
+                    task-executor="azureChannelAdapterForUnprocessedFilesTaskExecutor"
+                    max-messages-per-poll="${azure.hotfolder.storage.unprocessed.file.polling.fetch.batch-size}"/>
+    </int:inbound-channel-adapter>
+
+    <bean id="azureChannelAdapterForUnprocessedFilesTaskExecutor"
+          class="de.hybris.platform.cloud.commons.scheduling.HybrisAwareThreadPoolTaskExecutor">
+        <property name="waitForTasksToCompleteOnShutdown" value="true"/>
+        <property name="threadNamePrefix" value="AzureIntegrationUnprocessedFileTaskExecutorThread-${tenantId}-"/>
+        <property name="threadGroupName" value="AzureIntegrationUnprocessedFileTaskExecutor-${tenantId}"/>
+        <property name="corePoolSize" value="${azure.hotfolder.storage.unprocessed.file.polling.core-pool-size}"/>
+        <property name="maxPoolSize" value="${azure.hotfolder.storage.unprocessed.file.polling.max-pool-size}"/>
+        <property name="queueCapacity" value="-1"/>
+        <property name="keepAliveSeconds" value="60"/>
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor$DiscardPolicy"/>
+        </property>
+        <property name="role" value="integration"/>
+        <property name="autoStartup" value="false"/>
+        <property name="phase" value="10"/>
+        <property name="awaitTerminationSeconds" value="60"/>
+    </bean>
+
+    <int:channel id="cloudHotfolderUnprocessedFileChannel"/>
+    <int:router id="azureUnprocessedFileMessageRouter"
+                input-channel="cloudHotfolderUnprocessedFileChannel"
+                ref="azureUnprocessedFilesMessageRouter"/>
+
+
+    <alias name="defaultAzureUnprocessedFilesMessageRouter" alias="azureUnprocessedFilesMessageRouter"/>
+    <bean id="defaultAzureUnprocessedFilesMessageRouter"
+          class="de.hybris.platform.cloud.hotfolder.spring.integration.router.KeyValueMessageRouter">
+        <constructor-arg name="targetMessageChannelKey" value="${cloud.hotfolder.unprocessed.file.action}"/>
+        <constructor-arg name="targetChannelsMap" ref="azureUnprocessedFileActionTargetChannelMap"/>
+    </bean>
+
+    <alias name="defaultAzureUnprocessedFileActionTargetChannelMap" alias="azureUnprocessedFileActionTargetChannelMap"/>
+    <util:map id="defaultAzureUnprocessedFileActionTargetChannelMap">
+        <entry key="RESUBMIT_FILE"
+               value-ref="cloudHotfolderResubmitUnprocessedFileChannel"/>
+        <entry key="ERROR_FILE"
+               value-ref="cloudHotfolderErrorUnprocessedFileChannel"/>
+        <entry key="ARCHIVE_FILE"
+               value-ref="cloudHotfolderArchiveUnprocessedFileChannel"/>
+
+    </util:map>
+
+    <!--Channel to move the unprocessed file in root directory in azure hot folder for reprocessing-->
+    <int:channel id="cloudHotfolderResubmitUnprocessedFileChannel"/>
+
+    <int:outbound-channel-adapter channel="cloudHotfolderResubmitUnprocessedFileChannel"
+                                  id="azureResubmitUnprocessedFileChannelAdapter"
+                                  ref="azureReprocessMessageHandler"/>
+
+    <!--Message handler to move unprocessed file in remote directory for reprocessing-->
+    <alias name="defaultAzureReprocessMessageHandler" alias="azureReprocessMessageHandler"/>
+    <bean id="defaultAzureReprocessMessageHandler"
+          class="de.hybris.platform.cloud.azure.hotfolder.remote.outbound.AzureBlobRemoteMoveMessageHandler">
+        <constructor-arg ref="azureBlobSessionFactory"/>
+        <property name="remoteDirectory" ref="azureHotfolderRemotePath"/>
+    </bean>
+
+    <!--Channel to move the unprocessed file in archive directory in azure hot folder-->
+    <int:channel id="cloudHotfolderArchiveUnprocessedFileChannel"/>
+
+    <int:outbound-channel-adapter channel="cloudHotfolderArchiveUnprocessedFileChannel"
+                                  id="azureArchiveUnprocessedFileChannelAdapter"
+                                  ref="azureArchiveMessageHandler"/>
+
+    <!--Channel to move the unprocessed file in error directory in azure hot folder-->
+    <int:channel id="cloudHotfolderErrorUnprocessedFileChannel"/>
+
+    <int:outbound-channel-adapter channel="cloudHotfolderErrorUnprocessedFileChannel"
+                                  id="azureErrorUnprocessedFileChannelAdapter"
+                                  ref="azureErrorMessageHandler"/>
+
+</beans>
