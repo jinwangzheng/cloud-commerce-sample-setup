@@ -257,7 +257,7 @@
 
 <!-- For more information where to find those extensions: -->
 <!-- https://launchpad.support.sap.com/#/notes/2817992 -->
-    <extension name='${HYBRIS_BIN_DIR}/../../../extensions/sap-ccv2-hotfolder/azurecloudhotfolder' />
+    <extension name='azurecloudhotfolder' />
     <extension name='cloudcommons' />
     <extension name='cloudhotfolder' />
 
