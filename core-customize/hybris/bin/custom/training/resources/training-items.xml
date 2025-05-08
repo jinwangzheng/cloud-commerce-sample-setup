@@ -36,5 +36,27 @@
 			</attributes>
 		</itemtype>
 -->
+
+
+	  <itemtype code="BrookOrderFormEntry" autocreate="true" generate="true">
+            <deployment table="BrookOrderFormEntry" typecode="32767" />
+            <attributes>
+                <attribute autocreate="true" qualifier="sku" type="java.lang.String"
+                           generate="true">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" search="true"
+                               optional="false" />
+                </attribute>
+                <attribute autocreate="true" qualifier="quantity" type="java.lang.Integer"
+                           generate="true">
+                    <defaultvalue>Integer.valueOf(0)</defaultvalue>
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" search="true"
+                               optional="false" />
+                </attribute>
+            </attributes>
+        </itemtype>
+
+		
 	</itemtypes>
 </items>
