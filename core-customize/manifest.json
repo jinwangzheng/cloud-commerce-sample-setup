@@ -12,6 +12,7 @@
     "storefrontAddons": [
         {
             "addons": [
+                "smarteditaddon",
                 "ordermanagementaddon"
             ],
             "storefronts": [
