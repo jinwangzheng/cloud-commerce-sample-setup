@@ -8,12 +8,14 @@
         "training",
         "cloudscimwebservices",
         "smarteditaddon",
+        "personalizationaddon",
         "swaggerintegration"
     ],
     "storefrontAddons": [
         {
             "addons": [
                 "smarteditaddon",
+                "personalizationaddon",
                 "ordermanagementaddon"
             ],
             "storefronts": [
