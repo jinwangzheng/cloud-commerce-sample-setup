@@ -6,6 +6,7 @@
         "azurecloudhotfolder",
         "cloudmediaconversion",
         "mediaconversionbackoffice",
+        "wsehcache",
         "training",
         "cloudscimwebservices",
         "smarteditaddon",
@@ -485,6 +486,10 @@
                 }
             ],
             "webapps": [
+                {
+                    "name": "wsehcache",
+                    "contextPath": "/wsehcache"
+                }, 
                 {
                     "name": "test",
                     "contextPath": "/test"
