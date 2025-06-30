@@ -37,6 +37,7 @@
 	<alias name="defaultWSEhcache" alias="wsEhcache"/>
 	<bean id="defaultWSEhcache" class="de.hybris.platform.webservicescommons.cache.TenantAwareEhCacheManagerFactoryBean">
 		<property name="configLocation" value="${wsehcache.ehcache.location:/WEB-INF/cache/ehcache.xml}"/>
+                <property name="cacheNamePrefix" value="wsehcache"/
 	</bean>
 	
 </beans>
