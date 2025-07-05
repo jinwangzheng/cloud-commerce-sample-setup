@@ -11,7 +11,22 @@
         "cloudscimwebservices",
         "smarteditaddon",
         "personalizationaddon",
-        "swaggerintegration"
+        "swaggerintegration",
+        
+        "saporderexchangebackoffice",
+        "sapcustomerb2bbackoffice",
+        "sapcoreaddon",
+        "sapcoreconfigurationbackoffice",
+        "sapmodelbackoffice",
+        "sapcpiadapter",
+        "sapcpicustomerexchange",
+        "sapcpicustomerexchangeb2b",
+        "sapcpiorderexchange",
+        "sapcpiorderexchangeb2b",
+        "sapcpiproductexchange",
+        "sapcpiorderexchangeoms",
+        "sapcpiorderexchangeomsb2b",
+        "ysapcpiomsfulfillment"
     ],
     "storefrontAddons": [
         {
