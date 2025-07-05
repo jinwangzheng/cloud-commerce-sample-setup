@@ -2,6 +2,12 @@
     "commerceSuiteVersion": "2211.35",
     "enableImageProcessingService": true,
     "solrVersion": "9.7",
+    "extensionPacks" : [
+    {
+        "name" : "hybris-commerce-integrations",
+        "version" : "2211.30"
+    }
+    ],
     "extensions": [
         "azurecloudhotfolder",
         "cloudmediaconversion",
@@ -33,7 +39,9 @@
             "addons": [
                 "smarteditaddon",
                 "personalizationaddon",
-                "ordermanagementaddon"
+                "ordermanagementaddon",
+                "b2bacceleratoraddon",
+                "sapcoreaddon"
             ],
             "storefronts": [
                 "yacceleratorstorefront"
