@@ -1,15 +1,15 @@
 {
-    "commerceSuiteVersion": "2211.35",
+    "commerceSuiteVersion": "2211.42",
     "enableImageProcessingService": true,
     "solrVersion": "9.7",
     "extensionPacks" : [
     {
         "name" : "hybris-commerce-integrations",
-        "version" : "2211.30"
+        "version" : "2211.37"
     }
     ],
     "extensions": [
-        "azurecloudhotfolder",
+        
         "cloudmediaconversion",
         "mediaconversionbackoffice",
         "training",
