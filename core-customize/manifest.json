@@ -84,7 +84,8 @@
             "exclude": [
                 "azurecloudhotfolder",
                 "cloudcommons",
-                "cloudhotfolder"
+                "cloudhotfolder",
+                "training"
             ]
         }
     },
