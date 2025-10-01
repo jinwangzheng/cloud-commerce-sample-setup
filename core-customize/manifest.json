@@ -1,7 +1,7 @@
 {
-    "commerceSuiteVersion": "2211.35",
+    "commerceSuiteVersion": "2211.41",
     "enableImageProcessingService": true,
-    "solrVersion": "9.5",
+    "solrVersion": "9.7",
     "extensions": [
         "azurecloudhotfolder",
         "cloudmediaconversion",
