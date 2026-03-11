@@ -184,7 +184,9 @@
 	  <extension name= 'yempty' />
 	  <extension name= 'yhacext' />
 	  <extension name= 'yvoid' />
+		  <!--
 	  <extension name= 'oauth2' />
+		  -->
 	  <extension name= 'promotionenginebackoffice' />
 	  <extension name= 'promotionengineservices' />
 	  <extension name= 'droolsruleengineservices' />
