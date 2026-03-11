@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
+//import org.springframework.beans.factory.annotation.Required;
 
 import org.training.service.TrainingService;
 
@@ -77,19 +77,19 @@ public class DefaultTrainingService implements TrainingService
 		return DefaultTrainingService.class.getResourceAsStream("/training/sap-hybris-platform.png");
 	}
 
-	@Required
+	//@Required
 	public void setMediaService(final MediaService mediaService)
 	{
 		this.mediaService = mediaService;
 	}
 
-	@Required
+	//@Required
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
 	}
 
-	@Required
+	//@Required
 	public void setFlexibleSearchService(final FlexibleSearchService flexibleSearchService)
 	{
 		this.flexibleSearchService = flexibleSearchService;
