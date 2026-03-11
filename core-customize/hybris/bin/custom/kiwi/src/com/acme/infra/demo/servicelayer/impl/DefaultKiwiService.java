@@ -6,7 +6,8 @@ import java.util.List;
 
 import com.acme.infra.demo.model.InfraDemoItemModel;
 
-import javax.annotation.Resource;
+//import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
