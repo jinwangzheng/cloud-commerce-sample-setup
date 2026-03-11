@@ -12,7 +12,7 @@ import de.hybris.platform.servicelayer.ServicelayerBaseTest;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Test;
