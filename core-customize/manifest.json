@@ -291,10 +291,16 @@
                     "name": "embeddedserver",
                     "contextPath": "/embeddedserver"
                 },
+
                 {
-                    "name": "oauth2",
+                    "name": "authorizationserver",
                     "contextPath": "/authorizationserver"
                 },
+                {
+                    "name": "resourceserver",
+                    "contextPath": "/resourceserver"
+                },
+                
                 {
                     "name": "merchandisingsmartedit",
                     "contextPath": "/merchandisingsmartedit"
@@ -513,10 +519,16 @@
                     "name": "commercewebservices",
                     "contextPath": "/occ"
                 },
+
                 {
-                    "name": "oauth2",
+                    "name": "authorizationserver",
                     "contextPath": "/authorizationserver"
                 },
+                {
+                    "name": "resourceserver",
+                    "contextPath": "/resourceserver"
+                },
+                
                 {
                     "name": "permissionswebservices",
                     "contextPath": "/permissionswebservices"
