@@ -1,5 +1,5 @@
 {
-    "commerceSuiteVersion": "2211-jdk21.7",
+    "commercePreviewSuiteVersion": "2211-jdk21.8",
     "extensionPacks": [
         {
             "name": "hybris-commerce-integrations",
