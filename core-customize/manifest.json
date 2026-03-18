@@ -1,5 +1,5 @@
 {
-    "commerceSuitePreviewVersion": "2211-jdk21.8",
+    "commerceSuiteVersion": "2211-jdk21.9",
     "enableImageProcessingService": true,
     "solrVersion": "9.8",
     "extensions": [
