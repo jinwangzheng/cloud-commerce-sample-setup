@@ -296,10 +296,7 @@
                     "name": "authorizationserver",
                     "contextPath": "/authorizationserver"
                 },
-                {
-                    "name": "resourceserver",
-                    "contextPath": "/resourceserver"
-                },
+     
                 
                 {
                     "name": "merchandisingsmartedit",
@@ -524,10 +521,7 @@
                     "name": "authorizationserver",
                     "contextPath": "/authorizationserver"
                 },
-                {
-                    "name": "resourceserver",
-                    "contextPath": "/resourceserver"
-                },
+
                 
                 {
                     "name": "permissionswebservices",
