@@ -23,6 +23,17 @@
                 "yacceleratorstorefront"
             ],
             "template": "yacceleratorstorefront"
+        },
+           {
+            "addons": [
+                "smarteditaddon",
+                "personalizationaddon",
+                "ordermanagementaddon"
+            ],
+            "storefronts": [
+                "yb2bacceleratorstorefront"
+            ],
+            "template": "yacceleratorstorefront"
         }
     ],
     "useConfig": {
@@ -348,6 +359,10 @@
                 {
                     "name": "yacceleratorstorefront",
                     "contextPath": "/yacceleratorstorefront"
+                },
+                {
+                    "name": "yb2bacceleratorstorefront",
+                    "contextPath": "/yb2bacceleratorstorefront"
                 },
                 {
                     "name": "mediaweb",
