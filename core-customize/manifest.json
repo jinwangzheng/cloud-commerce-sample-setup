@@ -3,6 +3,7 @@
     "enableImageProcessingService": true,
     "solrVersion": "9.8",
     "extensions": [
+        "yb2bacceleratorstorefront",
         "azurecloudhotfolder",
         "cloudmediaconversion",
         "mediaconversionbackoffice",
