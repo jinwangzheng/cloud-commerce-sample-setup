@@ -29,7 +29,13 @@
                 "smarteditaddon",
                 "personalizationaddon",
                 "ordermanagementaddon",
-                "eventtrackingwsaddon"
+                "eventtrackingwsaddon",
+                "b2bpunchoutaddon",
+                "b2bacceleratoraddon",
+                "commerceorgaddon",
+                "captchaaddon",
+                "profiletagaddon",
+                "merchandisingaddon"
             ],
             "storefronts": [
                 "yb2bacceleratorstorefront"
