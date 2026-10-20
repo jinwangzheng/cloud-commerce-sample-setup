@@ -95,6 +95,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
+              "baseHref": "/spartacusstore/",
               "buildTarget": "spartacusstore:build:production,noSsr"
             },
             "development": {
