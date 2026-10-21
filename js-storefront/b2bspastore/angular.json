@@ -65,7 +65,6 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/b2bspastore/",
               "budgets": [
                 {
                   "type": "initial",
