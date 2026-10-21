@@ -41,7 +41,7 @@ export function app(): express.Express {
   server.get('*', (req, res) => {
     res.render(indexHtml, {
       req,
-      providers: [{ provide: APP_BASE_HREF, useValue: '/spartacusstore/'  }],
+      providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl  }],
     });
   });
 
