@@ -65,7 +65,7 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/spartacusstore/",
+ 
               "budgets": [
                 {
                   "type": "initial",
