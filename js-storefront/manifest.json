@@ -1,26 +1,26 @@
 {
   "applications": [
     {
-      "name": "spartacusstore",
-      "path": "spartacusstore",
+      "name": "mystore-221121-20261014-5",
+      "path": "mystore-221121-20261014-5",
       "ssr": {
         "enabled": true,
-        "path": "dist/spartacusstore/server/server.mjs"
+        "path": "dist/mystore-221121-20261014-5/server/server.mjs"
       },
       "csr": {
-        "webroot": "dist/spartacusstore/browser/"
+        "webroot": "dist/mystore-221121-20261014-5/browser/"
       },
       "enabledRepositories": ["spartacus-6"]
     },
     {
-      "name": "b2bspastore",
-      "path": "b2bspastore",
+      "name": "mystore-221121-20261014-4-b2b",
+      "path": "mystore-221121-20261014-4-b2b",
       "ssr": {
         "enabled": true,
-        "path": "dist/b2bspastore/server/server.mjs"
+        "path": "dist/mystore-221121-20261014-4-b2b/server/server.mjs"
       },
       "csr": {
-        "webroot": "dist/b2bspastore/browser/"
+        "webroot": "dist/mystore-221121-20261014-4-b2b/browser/"
       },
       "enabledRepositories": ["spartacus-6"]
     }
