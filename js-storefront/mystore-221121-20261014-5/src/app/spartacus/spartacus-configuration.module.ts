@@ -29,7 +29,13 @@ import {
       },
     }),
     provideConfig(<SiteContextConfig>{
-      context: {},
+    
+      context: {
+        currency: ['USD', 'EUR', 'GBP'],
+        baseSite: ['electronics-spa', 'apparel-uk-spa'],
+        urlParameters: ['baseSite', 'language', 'currency'],
+      },
+
     }),
     provideConfig(<I18nConfig>{
       i18n: {
