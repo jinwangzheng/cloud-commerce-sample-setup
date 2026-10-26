@@ -4,7 +4,7 @@
       "name": "mystore-221121-20261014-5",
       "path": "mystore-221121-20261014-5",
       "ssr": {
-        "enabled": false,
+        "enabled": true,
         "path": "dist/mystore-221121-20261014-5/server/server.mjs"
       },
       "csr": {
@@ -16,7 +16,7 @@
       "name": "mystore-221121-20261014-4-b2b",
       "path": "mystore-221121-20261014-4-b2b",
       "ssr": {
-        "enabled": false,
+        "enabled": true,
         "path": "dist/mystore-221121-20261014-4-b2b/server/server.mjs"
       },
       "csr": {
