@@ -20,7 +20,7 @@ import {
     provideConfig(<SmartEditConfig>{
       smartEdit: {
         storefrontPreviewRoute: 'cx-preview',
-        allowOrigin: 'localhost:9002',
+        allowOrigin: 'localhost:9002, backoffice.cnx5-sub7for980-d1-public.model-t.cc.commerce.ondemand.com:443, backoffice.cnx5-sub7for980-s1-public.model-t.cc.commerce.ondemand.com, backoffice.cnx5-sub7for980-p1-public.model-t.cc.commerce.ondemand.com:443 ',
       },
     }),
   ],
