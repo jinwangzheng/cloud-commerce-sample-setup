@@ -23,12 +23,6 @@ import {
         allowOrigin: 'backoffice.cnx5-sub7for980-d1-public.model-t.cc.commerce.ondemand.com:443',
       },
     }),
-    provideConfig(<SmartEditConfig>{
-      smartEdit: {
-        storefrontPreviewRoute: 'cx-preview',
-        allowOrigin: 'localhost:9002',
-      },
-    }),
   ],
 })
 export class SmartEditFeatureModule {}
