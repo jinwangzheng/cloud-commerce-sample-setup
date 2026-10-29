@@ -1,7 +1,7 @@
 {
     "commerceSuiteVersion": "2211-jdk21.11",
     "enableImageProcessingService": true,
-    "solrVersion": "9.8",
+    "solrVersion": "9.10",
     "extensions": [
         "yb2bacceleratorstorefront",
         "azurecloudhotfolder",
